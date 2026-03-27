@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Réplica fiel da interface do Spotify com HTML5 e CSS3 moderno">
+    <meta name="theme-color" content="#0f0f0f">
+    <title>Spotify - Música em Alta</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CUSTOM PROPERTIES */
+        :root {
+            --cor-fundo-primaria: #0f0f0f;
+            --cor-fundo-secundaria: #121212;
+            --cor-fundo-terciaria: #181818;
+            --cor-texto-primario: #ffffff;
+            --cor-texto-secundario: #b3b3b3;
+            --cor-borda: rgba(255, 255, 255, 0.1);
+            --cor-interacao: rgba(255, 255, 255, 0.1);
+            --cor-interacao-clara: rgba(255, 255, 255, 0.2);
+            --cor-destaque-verde: #1db954;
+            --cor-destaque-verde-claro: #1ed760;
+            
+            --familia-fonte: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --peso-fonte-normal: 400;
+            --peso-fonte-semi-negrito: 600;
+            --peso-fonte-negrito: 700;
+            
+            --transicao-padrao: all 0.3s ease;
+            --transicao-rapida: background-color 0.3s ease;
+        }
+
+        /* RESET & ESTILOS BASE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--familia-fonte);
+            background-color: var(--cor-fundo-primaria);
+            color: var(--cor-texto-primario);
+            overflow: hidden;
+        }
+
+        /* LAYOUT PRINCIPAL */
+        .conteiner-geral {
+            display: flex;
+            height: 100vh;
+        }
+
+        .envoltorio-principal {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* BARRA LATERAL (SIDEBAR) */
+        .barra-lateral {
+            width: 300px;
+            background-color: var(--cor-fundo-secundaria);
+            padding: 24px 20px;
+            border-right: 1px solid var(--cor-borda);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .barra-lateral::-webkit-scrollbar { width: 8px; }
+        .barra-lateral::-webkit-scrollbar-track { background: transparent; }
+        .barra-lateral::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .logo-spotify {
+            font-size: 24px;
+            font-weight: var(--peso-fonte-negrito);
+            margin-bottom: 32px;
+            color: var(--cor-destaque-verde);
+        }
+
+        .secao-lateral { margin-bottom: 32px; }
+
+        .titulo-lateral {
+            font-size: 16px;
+            font-weight: var(--peso-fonte-negrito);
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .icone-titulo-lateral {
+            width: 32px;
+            height: 32px;
+            background-color: var(--cor-interacao);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: var(--transicao-rapida);
+            border: none;
+            color: var(--cor-texto-primario);
+            font-weight: var(--peso-fonte-negrito);
+        }
+
+        .icone-titulo-lateral:hover { background-color: var(--cor-interacao-clara); }
+
+        .subtitulo-lateral {
+            font-size: 14px;
+            color: var(--cor-texto-secundario);
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+
+        .botao-lateral {
+            background: var(--cor-texto-primario);
+            border: 2px solid var(--cor-texto-primario);
+            color: #000000;
+            padding: 10px 24px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: var(--peso-fonte-semi-negrito);
+            cursor: pointer;
+            transition: var(--transicao-padrao);
+            width: 100%;
+            text-align: center;
+        }
+
+        .botao-lateral:hover {
+            background-color: #f0f0f0;
+            border-color: #000000;
+        }
+
+        .caixa-secao-lateral {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .rodape-lateral {
+            margin-top: auto;
+            border-top: 1px solid var(--cor-borda);
+            padding-top: 16px;
+        }
+
+        .links-rodape-lateral {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 12px;
+        }
+
+        .link-rodape-lateral {
+            color: var(--cor-texto-secundario);
+            cursor: pointer;
+            transition: var(--transicao-rapida);
+        }
+
+        .link-rodape-lateral:hover { color: var(--cor-texto-primario); }
+
+        .botao-idioma {
+            background: transparent;
+            border: 1px solid var(--cor-borda);
+            color: var(--cor-texto-primario);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* BARRA SUPERIOR (TOP BAR) */
+        .barra-superior {
+            background-color: var(--cor-fundo-secundaria);
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--cor-borda);
+            gap: 16px;
+        }
+
+        .barra-superior-esquerda {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .icone-navegacao {
+            width: 40px;
+            height: 40px;
+            background-color: var(--cor-interacao);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transicao-rapida);
+            flex-shrink: 0;
+            border: none;
+            color: var(--cor-texto-primario);
+        }
+
+        .icone-navegacao:hover { background-color: var(--cor-interacao-clara); }
+
+        .caixa-pesquisa {
+            background-color: var(--cor-interacao);
+            border-radius: 24px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 300px;
+            flex-shrink: 0;
+        }
+
+        .caixa-pesquisa input {
+            background: transparent;
+            border: none;
+            color: var(--cor-texto-primario);
+            font-size: 14px;
+            outline: none;
+            flex: 1;
+            font-family: var(--familia-fonte);
+        }
+
+        .caixa-pesquisa input::placeholder { color: var(--cor-texto-secundario); }
+
+        .barra-superior-centro {
+            display: flex;
+            gap: 32px;
+            font-size: 14px;
+            color: var(--cor-texto-secundario);
+            flex: 1;
+            justify-content: center;
+            margin: 0 40px;
+        }
+
+        .barra-superior-centro span {
+            cursor: pointer;
+            transition: var(--transicao-rapida);
+        }
+
+        .barra-superior-centro span:hover { color: var(--cor-texto-primario); }
+
+        .barra-superior-direita {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .link-superior {
+            color: var(--cor-texto-secundario);
+            cursor: pointer;
+            font-size: 13px;
+            transition: var(--transicao-rapida);
+            white-space: nowrap;
+        }
+
+        .link-superior:hover { color: var(--cor-texto-primario); }
+
+        .botao-primario {
+            background-color: var(--cor-texto-primario);
+            color: #000000;
+            padding: 8px 32px;
+            border-radius: 24px;
+            border: none;
+            font-weight: var(--peso-fonte-negrito);
+            cursor: pointer;
+            font-size: 14px;
+            transition: var(--transicao-padrao);
+            white-space: nowrap;
+        }
+
+        .botao-primario:hover { transform: scale(1.05); }
+
+        /* CONTEÚDO PRINCIPAL (MAIN)*/
+        .conteudo-principal {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px;
+            background-color: var(--cor-fundo-primaria);
+        }
+
+        .conteudo-principal::-webkit-scrollbar { width: 8px; }
+        .conteudo-principal::-webkit-scrollbar-track { background: transparent; }
+        .conteudo-principal::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        /* SEÇÕES E BOTÕES DE ROLAGEM */
+        .secao {
+            margin-bottom: 56px;
+            position: relative; 
+        }
+
+        .cabecalho-secao {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .titulo-secao {
+            font-size: 28px;
+            font-weight: var(--peso-fonte-negrito);
+            color: var(--cor-texto-primario);
+        }
+
+        .ver-tudo {
+            color: var(--cor-texto-secundario);
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transicao-rapida);
+        }
+
+        .ver-tudo:hover { color: var(--cor-texto-primario); }
+
+        .botao-rolagem {
+            position: absolute;
+            top: 55%; 
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none; 
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: var(--transicao-rapida);
+        }
+
+        .botao-rolagem:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .botao-rolagem.esquerda { left: -15px; }
+        .botao-rolagem.direita { right: -15px; }
+
+        .secao:hover .botao-rolagem { display: flex; }
+
+        /* GRADE / CARROSSEL (GRID)*/
+        .grade {
+            display: grid;
+            gap: 24px; 
+            grid-auto-flow: column; 
+            grid-auto-columns: calc((100% - (24px * 5)) / 6); 
+            overflow-x: auto; 
+            scroll-behavior: smooth;
+            scrollbar-width: none; 
+        }
+
+        .grade::-webkit-scrollbar { display: none; }
+
+        /* CARTÕES DE MÚSICA/ÁLBUM (CARDS)*/
+        .cartao {
+            background-color: transparent;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transicao-padrao);
+            border: none;
+        }
+
+        .cartao:hover {
+            background-color: var(--cor-interacao);
+            transform: translateY(-4px);
+        }
+
+        .imagem-cartao {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--cor-destaque-verde) 0%, var(--cor-destaque-verde-claro) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            object-fit: cover;
+            border-radius: 8px; 
+        }
+
+        .info-cartao { padding: 16px 0; }
+
+        .titulo-cartao {
+            font-size: 16px; 
+            font-weight: var(--peso-fonte-semi-negrito);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .artista-cartao {
+            font-size: 14px; 
+            color: var(--cor-texto-secundario);
+            line-height: 1.3;
+        }
+
+        /* CARTÕES DE ARTISTA (Modificador) */
+        .cartao-artista {
+            background-color: transparent;
+            border-radius: 8px; 
+            padding: 16px; 
+            cursor: pointer;
+            transition: var(--transicao-padrao);
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; 
+            text-align: center;
+        }
+
+        .cartao-artista:hover {
+            background-color: var(--cor-interacao);
+            transform: translateY(-4px);
+        }
+
+        .imagem-artista {
+            width: 100%; 
+            aspect-ratio: 1; 
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--cor-destaque-verde) 0%, var(--cor-destaque-verde-claro) 100%);
+            margin-bottom: 16px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            object-fit: cover;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        .nome-artista {
+            font-size: 16px; 
+            font-weight: var(--peso-fonte-semi-negrito);
+            margin-bottom: 4px;
+        }
+
+        .tipo-artista {
+            font-size: 14px; 
+            color: var(--cor-texto-secundario);
+        }
+
+        /* RESPONSIVIDADE (@MEDIA QUERIES) */
+        @media (max-width: 1400px) {
+            .grade { grid-auto-columns: calc((100% - (24px * 4)) / 5); }
+        }
+
+        @media (max-width: 1200px) {
+            .grade { grid-auto-columns: calc((100% - (24px * 3)) / 4); }
+        }
+
+        @media (max-width: 768px) {
+            .conteiner-geral { flex-direction: column; }
+            .barra-lateral { width: 100%; height: auto; }
+            .grade { grid-auto-columns: calc((100% - (24px * 1)) / 2); }
+            .botao-rolagem { display: none !important; } 
+        }
+    </style>
+</head>
+<body>
+    <div class="conteiner-geral">
+        <aside class="barra-lateral" role="navigation" aria-label="Navegação Principal">
+            <div class="logo-spotify" aria-label="Spotify">🎵</div>
+
+            <section class="secao-lateral">
+                <h2 class="titulo-lateral">
+                    Sua Biblioteca
+                    <button class="icone-titulo-lateral" aria-label="Adicionar nova playlist" type="button">+</button>
+                </h2>
+            </section>
+
+            <section class="secao-lateral">
+                <div class="caixa-secao-lateral">
+                    <h3 class="titulo-lateral">Cria sua primeira playlist</h3>
+                    <p class="subtitulo-lateral">É fácil, vamos te ajudar.</p>
+                    <button class="botao-lateral" type="button">Criar playlist</button>
+                </div>
+            </section>
+
+            <section class="secao-lateral">
+                <div class="caixa-secao-lateral">
+                    <h3 class="titulo-lateral">Que tal seguir um podcast novo?</h3>
+                    <p class="subtitulo-lateral">Avisaremos você sobre novos episódios.</p>
+                    <button class="botao-lateral" type="button">Explore podcasts</button>
+                </div>
+            </section>
+
+            <footer class="rodape-lateral">
+                <nav class="links-rodape-lateral" aria-label="Links Legais">
+                    <a href="#" class="link-rodape-lateral">Legal</a>
+                    <a href="#" class="link-rodape-lateral">Segurança e Centro de privacidade</a>
+                    <a href="#" class="link-rodape-lateral">Política de privacidade</a>
+                    <a href="#" class="link-rodape-lateral">Cookies</a>
+                    <a href="#" class="link-rodape-lateral">Sobre anúncios</a>
+                    <a href="#" class="link-rodape-lateral">Acessibilidade</a>
+                    <a href="#" class="link-rodape-lateral">Cookies</a>
+                </nav>
+                <button class="botao-idioma" type="button" aria-label="Selecionar idioma">
+                    <i class="fas fa-globe"></i> Português do Brasil
+                </button>
+            </footer>
+        </aside>
+
+        <div class="envoltorio-principal">
+            <header class="barra-superior" role="banner">
+                <div class="barra-superior-esquerda">
+                    <button class="icone-navegacao" aria-label="Home" type="button"><i class="fas fa-home"></i></button>
+                    <button class="icone-navegacao" aria-label="Pesquisar" type="button"><i class="fas fa-search"></i></button>
+                    <div class="caixa-pesquisa" role="search">
+                        <i class="fas fa-search" style="color: var(--cor-texto-secundario);"></i>
+                        <input type="search" placeholder="O que você quer ouvir?" aria-label="Pesquisar músicas">
+                    </div>
+                </div>
+                <nav class="barra-superior-centro" aria-label="Menu Principal">
+                    <span>Premium</span>
+                    <span>Suporte</span>
+                    <span>Baixar</span>
+                </nav>
+                <div class="barra-superior-direita">
+                    <span class="link-superior"><i class="fas fa-download"></i> Instalar aplicativo</span>
+                    <span class="link-superior">Inscrever-se</span>
+                    <button class="botao-primario" type="button">Entrar</button>
+                </div>
+            </header>
+
+            <main class="conteudo-principal">
+                
+                <section class="secao">
+                    <header class="cabecalho-secao">
+                        <h1 class="titulo-secao">Músicas em alta</h1>
+                        <a href="#" class="ver-tudo">Mostrar tudo</a>
+                    </header>
+                    <button class="botao-rolagem esquerda" onclick="rolarGrade(this, -1)"><i class="fas fa-chevron-left"></i></button>
+                    <button class="botao-rolagem direita" onclick="rolarGrade(this, 1)"><i class="fas fa-chevron-right"></i></button>
+                    
+                    <div class="grade">
+                        <article class="cartao">
+                            <img src="imagens/BTS.png" class="imagem-cartao" alt="SWIM - BTS">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">SWIM</div>
+                                <div class="artista-cartao">BTS</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/DJ Gu.png" class="imagem-cartao" alt="Relíquia do 2T - DJ Gu">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Relíquia do 2T</div>
+                                <div class="artista-cartao">DJ Gu, MC Vinery7, MC Tuto...</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Ferrugem.png" class="imagem-cartao" alt="Arrependo - Ferrugem">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Arrependo (Onde Você Anda)</div>
+                                <div class="artista-cartao">Ferrugem</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Gusttavo Lima.png" class="imagem-cartao" alt="Assunto Que Dói - Gusttavo Lima">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Assunto Que Dói</div>
+                                <div class="artista-cartao">Gusttavo Lima</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Panda.png" class="imagem-cartao" alt="Eu Te Seguro - Panda">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Eu Te Seguro - Ao Vivo</div>
+                                <div class="artista-cartao">Panda, MJ Records</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Menos é Mais.png" class="imagem-cartao" alt="P do Pecado - Filho do Piseiro">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">P do Pecado - Ao Vivo</div>
+                                <div class="artista-cartao">Grupo Menos É Mais...</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Filho do Piseiro.png" class="imagem-cartao" alt="Raparigas - Filho do Piseiro">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Raparigas</div>
+                                <div class="artista-cartao">Filho do Piseiro</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Murilo Huff.png" class="imagem-cartao" alt="Saudade Estranha - Murilo Huff">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Saudade Estranha - Ao Vivo</div>
+                                <div class="artista-cartao">Murilo Huff</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Sabrina Carpenter.png" class="imagem-cartao" alt="Manchild - Sabrina Carpenter">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Manchild</div>
+                                <div class="artista-cartao">Sabrina Carpenter</div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="secao">
+                    <header class="cabecalho-secao">
+                        <h1 class="titulo-secao">Artistas populares</h1>
+                        <a href="#" class="ver-tudo">Mostrar tudo</a>
+                    </header>
+                    <button class="botao-rolagem esquerda" onclick="rolarGrade(this, -1)"><i class="fas fa-chevron-left"></i></button>
+                    <button class="botao-rolagem direita" onclick="rolarGrade(this, 1)"><i class="fas fa-chevron-right"></i></button>
+                    
+                    <div class="grade">
+                        <article class="cartao-artista">
+                            <img src="imagens/Henrique e Juliano.png" class="imagem-artista" alt="Henrique & Juliano">
+                            <div class="nome-artista">Henrique & Juliano</div>
+                            <div class="tipo-artista">Artista</div>
+                        </article>
+                        <article class="cartao-artista">
+                            <img src="imagens/Diego.png" class="imagem-artista" alt="Diego & Victor Hugo">
+                            <div class="nome-artista">Diego & Victor Hugo</div>
+                            <div class="tipo-artista">Artista</div>
+                        </article>
+                        <article class="cartao-artista">
+                            <img src="imagens/Grupo Menos.png" class="imagem-artista" alt="Grupo Menos É Mais">
+                            <div class="nome-artista">Grupo Menos É Mais</div>
+                            <div class="tipo-artista">Artista</div>
+                        </article>
+                        <article class="cartao-artista">
+                            <img src="imagens/Jorge e Mateus.png" class="imagem-artista" alt="Jorge & Mateus">
+                            <div class="nome-artista">Jorge & Mateus</div>
+                            <div class="tipo-artista">Artista</div>
+                        </article>
+                        <article class="cartao-artista">
+                            <img src="imagens/Ze Neto.png" class="imagem-artista" alt="Zé Neto & Cristiano">
+                            <div class="nome-artista">Zé Neto & Cristiano</div>
+                            <div class="tipo-artista">Artista</div>
+                        </article>
+                        <article class="cartao-artista">
+                            <img src="imagens/Matheus e Kaua.png" class="imagem-artista" alt="Matheus & Kauan">
+                            <div class="nome-artista">Matheus & Kauan</div>
+                            <div class="tipo-artista">Artista</div>
+                        </article>
+                        <article class="cartao-artista">
+                            <img src="imagens/Murilo Huff.png" class="imagem-artista" alt="Murilo Huff">
+                            <div class="nome-artista">Murilo Huff</div>
+                            <div class="tipo-artista">Artista</div>
+                        </article>
+                        <article class="cartao-artista">
+                            <img src="imagens/Sabrina Carpenter.png" class="imagem-artista" alt="Sabrina Carpenter">
+                            <div class="nome-artista">Sabrina Carpenter</div>
+                            <div class="tipo-artista">Artista</div>
+                        </article>
+                        <article class="cartao-artista">
+                            <img src="imagens/BTS.png" class="imagem-artista" alt="BTS">
+                            <div class="nome-artista">BTS</div>
+                            <div class="tipo-artista">Artista</div>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="secao">
+                    <header class="cabecalho-secao">
+                        <h1 class="titulo-secao">Singles e álbuns que todo mundo gosta</h1>
+                        <a href="#" class="ver-tudo">Mostrar tudo</a>
+                    </header>
+                    <button class="botao-rolagem esquerda" onclick="rolarGrade(this, -1)"><i class="fas fa-chevron-left"></i></button>
+                    <button class="botao-rolagem direita" onclick="rolarGrade(this, 1)"><i class="fas fa-chevron-right"></i></button>
+                    
+                    <div class="grade">
+                        <article class="cartao">
+                            <img src="imagens/Henrique e Juliano.png" class="imagem-cartao" alt="Manifesto Musical">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Manifesto Musical</div>
+                                <div class="artista-cartao">Henrique & Juliano</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Diego.png" class="imagem-cartao" alt="Equilíbrio">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Equilíbrio</div>
+                                <div class="artista-cartao">Diego & Victor Hugo</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Grupo Menos.png" class="imagem-cartao" alt="Churrasquinho">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Churrasquinho</div>
+                                <div class="artista-cartao">Grupo Menos É Mais</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Jorge e Mateus.png" class="imagem-cartao" alt="O Mundo É Tão Pequeno">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">O Mundo É Tão Pequeno</div>
+                                <div class="artista-cartao">Jorge & Mateus</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Ze Neto.png" class="imagem-cartao" alt="Um Novo Sonho">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Um Novo Sonho</div>
+                                <div class="artista-cartao">Zé Neto & Cristiano</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Matheus e Kaua.png" class="imagem-cartao" alt="Na Praia 2">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Na Praia 2</div>
+                                <div class="artista-cartao">Matheus & Kauan</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Murilo Huff.png" class="imagem-cartao" alt="Saudade Estranha">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Saudade Estranha</div>
+                                <div class="artista-cartao">Murilo Huff</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/Sabrina Carpenter.png" class="imagem-cartao" alt="Man´s Best Friend">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">Man´s Best Friend</div>
+                                <div class="artista-cartao">Sabrina Carpenter</div>
+                            </div>
+                        </article>
+                        <article class="cartao">
+                            <img src="imagens/BTS.png" class="imagem-cartao" alt="ARIRANG">
+                            <div class="info-cartao">
+                                <div class="titulo-cartao">ARIRANG</div>
+                                <div class="artista-cartao">BTS</div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function rolarGrade(botaoClicado, direcao) {
+            // Pega o contêiner .grade que está na mesma seção do botão clicado
+            const grade = botaoClicado.parentElement.querySelector('.grade');
+            
+            // Calcula o tamanho exato da rolagem (1 cartao + o gap de 24px)
+            const larguraCartao = grade.querySelector('article').clientWidth + 24;
+            
+            // Rola 3 cartões por vez
+            grade.scrollBy({ left: (larguraCartao * 3) * direcao, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
